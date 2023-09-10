@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <div id="chat-container">
+        <div id="chat-messages">
+            <!-- Display chat messages here -->
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" id="user-input" placeholder="Type your message..." />
+            <button id="send-button">Send</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('form').submit(function(event) {
+                event.preventDefault();
+                var userMessage = $('#user-input').val();
+                $('#chat-messages').append('<p>You: ' + userMessage + '</p>');
+                $('#user-input').val('');
+                // Include the CSRF token in the request headers
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            $.ajax({
+                url: '',
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken }, // Include the CSRF token here
+                data: { user_message: userMessage },
+                success: function(data) {
+                    $('#chat-messages').append('<p>Chatbot: ' + data.response + '</p>');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
